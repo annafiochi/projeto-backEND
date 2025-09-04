@@ -4,9 +4,7 @@ class BookModel {
     // Obter todos os livros
     async findAll() {
         const books = await prisma.book.findMany({
-            orderBy: {
-                createdAt: "desc",
-            },
+           
         });
         return books;
     }
