@@ -21,34 +21,30 @@ class BookModel {
     }
 
     //criar um novo livro
-    async create(title, releaseYear, author) {
+    async create(title, synposee, releaseYear, genres, imageUrl, author, shelfId, status) {
         const newBook = await prisma.book.create({
             data: {
                 title,
+                synposee,
                 releaseYear,
+                genres,
+                imageUrl,
                 author,
+                shelfId,
+                status,
             },
         });
         return newBook;
     }
 
     //Atualizar um livro
-    async update(id, title, releaseYear, author) {
+    async update(updateData) {
+        const { id, title, synposee, releaseYear, genres, imageUrl, author, shelfId, status } = updateData;
+        
         const book = await this.findById(id);
 
         if (!book) {
             return null;
-        }
-
-        // Atualize o livro existente com os novos dados
-        if (title !== undefined) {
-            title = title;
-        }
-        if (releaseYear !== undefined) {
-            releaseYear = releaseYear;
-        }
-        if (author !== undefined) {
-            author = author;
         }
 
         const bookUpdate = await prisma.book.update({
@@ -57,8 +53,13 @@ class BookModel {
             },
             data: {
                 title,
+                synposee,
                 releaseYear,
+                genres,
+                imageUrl,
                 author,
+                shelfId,
+                status,
             },
         });
         return bookUpdate;

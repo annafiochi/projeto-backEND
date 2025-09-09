@@ -22,6 +22,7 @@ model Book {
   imageUrl    String 
   author      String
   shelfId     Int?   
+  status      String 
   
   shelf       Shelf? @relation(fields: [shelfId], references: [id])
 

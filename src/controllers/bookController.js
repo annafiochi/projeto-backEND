@@ -1,4 +1,5 @@
 import BookModel from "../models/bookModel.js";
+import ShelfModel from "../models/shelfModel.js";
 
 class BookController {
   // GET /livros
@@ -35,20 +36,35 @@ class BookController {
   async createBook(req, res) {
     try {
           //validação básica
-      const { title, releaseYear, author,  } = req.body;
+      const { title, synposee, releaseYear, genres, imageUrl, author, shelfId, status } = req.body;
     
-//verfica se todos os campos do livro foram fornecidos
-        if (!title || !author || !releaseYear) {
+//verfica se todos os campos obrigatórios do livro foram fornecidos
+        if (!title || !author || !releaseYear || !genres || !imageUrl || !status) {
             return res.status(400).json({
-                error: "Os campos título, autor e ano de lançamento são obrigatórios",
+                error: "Os campos title, author, releaseYear, genres, imageUrl e status são obrigatórios",
             });
+    }
+
+    
+    if (shelfId) {
+        const shelf = await ShelfModel.findById(shelfId);
+        if (!shelf) {
+            return res.status(400).json({
+                error: "A estante especificada não existe",
+            });
+        }
     }
 
     //criar o novo livro
     const newBook = await BookModel.create(
         title,
+        synposee,
         releaseYear,
+        genres,
+        imageUrl,
         author,
+        shelfId,
+        status
     );
 
     if (!newBook) {
@@ -69,16 +85,30 @@ class BookController {
   async updateBook(req, res) {
     try {
       const { id } = req.params;
-      const { title, releaseYear, author } = req.body;
+      const { title, synposee, releaseYear, genres, imageUrl, author, shelfId, status } = req.body;
 
+      // Validar se a estante existe (se shelfId foi fornecido)
+      if (shelfId) {
+          const shelf = await ShelfModel.findById(shelfId);
+          if (!shelf) {
+              return res.status(400).json({
+                  error: "A estante especificada não existe",
+              });
+          }
+      }
 
       //atualizar os livros
 
       const updatedBook = await BookModel.update({
         id,
         title,
+        synposee,
         releaseYear,
-        author
+        genres,
+        imageUrl,
+        author,
+        shelfId,
+        status
       });
 
       if (!updatedBook) {

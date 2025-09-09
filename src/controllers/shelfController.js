@@ -1,16 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import ShelfModel from "../models/shelfModel.js";
 
 class ShelfController {
   // GET /shelves
   async getAllShelves(req, res) {
     try {
-      const shelves = await prisma.shelf.findMany({
-        include: {
-          books: true // inclui os livros da prateleira
-        }
-      });
+      const shelves = await ShelfModel.findAll();
       res.json(shelves);
     } catch (error) {
       console.error("Erro ao buscar as prateleiras:", error);
@@ -23,12 +17,7 @@ class ShelfController {
     try {
       const { id } = req.params;
 
-      const shelf = await prisma.shelf.findUnique({
-        where: { id: parseInt(id) },
-        include: {
-          books: true
-        }
-      });
+      const shelf = await ShelfModel.findById(id);
 
       if (!shelf) {
         return res.status(404).json({ error: "Prateleira não encontrada!" });
@@ -52,12 +41,7 @@ class ShelfController {
         });
       }
 
-      const newShelf = await prisma.shelf.create({
-        data: {
-          name,
-          description
-        }
-      });
+      const newShelf = await ShelfModel.create(name, description);
 
       res.status(201).json({
         message: "Prateleira criada com sucesso",
@@ -75,13 +59,15 @@ class ShelfController {
       const { id } = req.params;
       const { name, description } = req.body;
 
-      const updatedShelf = await prisma.shelf.update({
-        where: { id: parseInt(id) },
-        data: {
-          name,
-          description
-        }
+      const updatedShelf = await ShelfModel.update({
+        id,
+        name,
+        description
       });
+
+      if (!updatedShelf) {
+        return res.status(404).json({ error: "Prateleira não encontrada para atualização" });
+      }
 
       res.json(updatedShelf);
     } catch (error) {
@@ -95,9 +81,11 @@ class ShelfController {
     try {
       const { id } = req.params;
 
-      await prisma.shelf.delete({
-        where: { id: parseInt(id) }
-      });
+      const result = await ShelfModel.delete(id);
+
+      if (!result) {
+        return res.status(404).json({ error: "Prateleira não encontrada" });
+      }
 
       res.status(200).json({
         message: "Prateleira removida com sucesso",
