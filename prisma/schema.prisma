@@ -13,6 +13,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id          Int @id @default(autoincrement())
+  name        String
+  email       String @unique
+  password    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  books       Book[]
+  shelves     Shelf[]
+  
+  @@map ("users")
+}
+
 model Book {
   id          Int @id @default(autoincrement())
   title       String
@@ -22,19 +36,27 @@ model Book {
   imageUrl    String 
   author      String
   shelfId     Int?   
-  status      String 
+  status      String // "lidos", "nao-lidos", "lendo", "quero-ler", "abandonei", "relendo"
+  userId      Int?   // Relacionamento com usuário
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   
   shelf       Shelf? @relation(fields: [shelfId], references: [id])
+  user        User?  @relation(fields: [userId], references: [id])
 
   @@map ("books")
 }
 
 model Shelf {
   id          Int @id @default(autoincrement())
-  name        String // "Lidos", "Quero Ler", "Lendo", "Abandonei", "relendo"
+  name        String // "Lidos", "Quero Ler", "Lendo", "Abandonei", "Relendo", "Não Lidos"
   description String?
+  userId      Int?   // Relacionamento com usuário
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   
   books       Book[] 
+  user        User?  @relation(fields: [userId], references: [id])
   
   @@map ("shelves")
 }

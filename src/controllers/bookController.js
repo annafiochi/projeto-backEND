@@ -13,6 +13,18 @@ class BookController {
     }
   }
 
+  // GET /livros/status/:status
+  async getBooksByStatus(req, res) {
+    try {
+      const { status } = req.params;
+      const books = await BookModel.findByStatus(status);
+      res.json(books);
+    } catch (error) {
+      console.error("Erro ao buscar livros por status:", error);
+      res.status(500).json({ error: "Erro ao buscar livros por status" });
+    }
+  }
+
   // GET /livros/:id
   async getBookById(req, res) {
     try {
@@ -142,6 +154,44 @@ class BookController {
         }
      
     }
+
+  // PATCH /livros/:id/status - Atualizar apenas status/estante do livro
+  async updateBookStatus(req, res) {
+    try {
+      const { id } = req.params;
+      const { status, shelfId } = req.body;
+
+      if (!status) {
+        return res.status(400).json({
+          error: "O campo status é obrigatório",
+        });
+      }
+
+      // Verificar se a estante existe (se shelfId foi fornecido)
+      if (shelfId) {
+          const shelf = await ShelfModel.findById(shelfId);
+          if (!shelf) {
+              return res.status(400).json({
+                  error: "A estante especificada não existe",
+              });
+          }
+      }
+
+      const updatedBook = await BookModel.updateStatus(id, status, shelfId);
+
+      if (!updatedBook) {
+        return res.status(404).json({ error: "Livro não encontrado para atualização" });
+      }
+
+      res.json({
+        message: "Status do livro atualizado com sucesso",
+        book: updatedBook,
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar status do livro:", error);
+      res.status(500).json({ error: "Erro ao atualizar status do livro!" });
+    }
+  }
   }
 
 

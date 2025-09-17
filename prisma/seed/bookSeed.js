@@ -38,6 +38,20 @@ async function seedBooksAndShelves() {
       },
     });
 
+    const shelf5 = await prisma.shelf.create({
+      data: {
+        name: "Relendo",
+        description: "Livros que estou relendo",
+      },
+    });
+
+    const shelf6 = await prisma.shelf.create({
+      data: {
+        name: "Não Lidos",
+        description: "Livros que ainda não comecei a ler",
+      },
+    });
+
     // Criar livros
     const book1 = await prisma.book.create({
       data: {
@@ -101,6 +115,45 @@ async function seedBooksAndShelves() {
         author: "Autor Teste",
         status: "lendo",
         shelfId: null, // Sem estante
+      },
+    });
+
+    const book6 = await prisma.book.create({
+      data: {
+        title: "Dom Casmurro",
+        synposee: "A história de Bentinho e Capitu",
+        releaseYear: 1899,
+        genres: "Clássico, Romance",
+        imageUrl: "https://m.media-amazon.com/images/I/71-q+8nO+vL._SY522_.jpg",
+        author: "Machado de Assis",
+        status: "relendo",
+        shelfId: shelf5.id,
+      },
+    });
+
+    const book7 = await prisma.book.create({
+      data: {
+        title: "O Pequeno Príncipe",
+        synposee: "Uma fábula sobre amizade e humanidade",
+        releaseYear: 1943,
+        genres: "Ficção, Infantil",
+        imageUrl: "https://m.media-amazon.com/images/I/71bWuf6vWZL._SY522_.jpg",
+        author: "Antoine de Saint-Exupéry",
+        status: "nao-lidos",
+        shelfId: shelf6.id,
+      },
+    });
+
+    const book8 = await prisma.book.create({
+      data: {
+        title: "1984",
+        synposee: "Uma distopia sobre controle totalitário",
+        releaseYear: 1949,
+        genres: "Ficção Científica, Distopia",
+        imageUrl: "https://m.media-amazon.com/images/I/71kxa1-0mfL._SY522_.jpg",
+        author: "George Orwell",
+        status: "nao-lidos",
+        shelfId: shelf6.id,
       },
     });
 

@@ -4,7 +4,49 @@ class BookModel {
     // Obter todos os livros
     async findAll() {
         const books = await prisma.book.findMany({
-           
+            include: {
+                shelf: true,
+            },
+        });
+        return books;
+    }
+
+    // Obter livros por status
+    async findByStatus(status) {
+        const books = await prisma.book.findMany({
+            where: {
+                status: status,
+            },
+            include: {
+                shelf: true,
+            },
+        });
+        return books;
+    }
+
+    // Obter livros de um usuário específico
+    async findByUserId(userId) {
+        const books = await prisma.book.findMany({
+            where: {
+                userId: Number(userId),
+            },
+            include: {
+                shelf: true,
+            },
+        });
+        return books;
+    }
+
+    // Obter livros de um usuário por status
+    async findByUserIdAndStatus(userId, status) {
+        const books = await prisma.book.findMany({
+            where: {
+                userId: Number(userId),
+                status: status,
+            },
+            include: {
+                shelf: true,
+            },
         });
         return books;
     }
@@ -60,6 +102,26 @@ class BookModel {
                 author,
                 shelfId,
                 status,
+            },
+        });
+        return bookUpdate;
+    }
+
+    // Atualizar apenas o status e estante de um livro
+    async updateStatus(id, status, shelfId) {
+        const book = await this.findById(id);
+
+        if (!book) {
+            return null;
+        }
+
+        const bookUpdate = await prisma.book.update({
+            where: { 
+                id: Number(id) 
+            },
+            data: {
+                status,
+                shelfId: shelfId ? Number(shelfId) : null,
             },
         });
         return bookUpdate;
