@@ -35,6 +35,7 @@ model Book {
   genres      String 
   imageUrl    String 
   author      String
+  pages       Int?   // Número de páginas
   shelfId     Int?   
   status      String // "lidos", "nao-lidos", "lendo", "quero-ler", "abandonei", "relendo"
   userId      Int?   // Relacionamento com usuário
